@@ -96,6 +96,7 @@ void APatrollingEnemyController::OnUnPossess()
 	Super::OnUnPossess();
 
 	PossessedEnemy = nullptr;
+	Destroy();
 }
 
 void APatrollingEnemyController::BeginPlay()

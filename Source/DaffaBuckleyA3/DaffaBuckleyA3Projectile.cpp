@@ -2,6 +2,8 @@
 
 #include "DaffaBuckleyA3Projectile.h"
 
+#include "AIController.h"
+#include "BlueprintEditor.h"
 #include "Enemy.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
@@ -43,7 +45,7 @@ void ADaffaBuckleyA3Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 		
 		Destroy();
 	}
-	if (Cast<AEnemy>(OtherActor))
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) &&Cast<AEnemy>(OtherActor))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("An Enemy has been hit") );
 		
@@ -51,9 +53,13 @@ void ADaffaBuckleyA3Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 		//EnemyMesh->AddImpulse(BulletSpeed * 20 * EnemyMesh->GetMass());
 
 		//For some reason, Character cannot be launched, I have tried to set the movement to Falling state, Jump state to no avail. 
-		Cast<ACharacter>(OtherActor)->GetCharacterMovement()->SetMovementMode(MOVE_None);
-		Cast<ACharacter>(OtherActor)->LaunchCharacter(BulletDirection * 250, true, true);
-		Cast<AEnemy>(OtherActor)->Destroyed = true;
+		//Cast<ACharacter>(OtherActor)->GetCharacterMovement()->SetMovementMode(MOVE_None);
+		if (Cast<AEnemy>(OtherActor)->EnemyBody)
+		{
+			Cast<AEnemy>(OtherActor)->EnemyBody->SetSimulatePhysics(true);
+			Cast<AEnemy>(OtherActor)->LaunchCharacter(BulletDirection * 500, false, false);
+			Cast<AEnemy>(OtherActor)->Destroyed = true;	
+		}
 		
 		UE_LOG(LogTemp, Warning, TEXT("Character launched"));
 	}
