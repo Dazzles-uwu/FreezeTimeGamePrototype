@@ -45,5 +45,6 @@ void ASpinningEnemyController::OnUnPossess()
 	Super::OnUnPossess();
 
 	PossessedEnemy = nullptr;
+	Destroy();
 	
 }

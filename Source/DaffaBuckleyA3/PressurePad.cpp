@@ -39,7 +39,6 @@ void APressurePad::OnHitboxOverlapBegin(UPrimitiveComponent* OverlappedComponent
 	if(OtherActor && OtherActor != this)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Overlap Has Begun"));
-		PressurePadHitBoxDelegate.Broadcast();
 
 		if (Cast<ADaffaBuckleyA3Character>(OtherActor)->IsPlayerControlled())
 		{

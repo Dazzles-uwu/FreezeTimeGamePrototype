@@ -8,8 +8,6 @@
 #include "PressurePad.generated.h"
 
 // We declare our own custom event that we will be activating
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPressurePadActivated);
-
 
 UCLASS()
 class DAFFABUCKLEYA3_API APressurePad : public AActor
@@ -19,9 +17,6 @@ class DAFFABUCKLEYA3_API APressurePad : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APressurePad();
-
-	UPROPERTY(BlueprintAssignable)
-		FOnPressurePadActivated PressurePadHitBoxDelegate;
 
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* PressurePadMesh;
