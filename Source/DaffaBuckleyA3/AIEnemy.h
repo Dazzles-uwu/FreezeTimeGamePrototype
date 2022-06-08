@@ -31,4 +31,8 @@ public:
 
 	void ShootPlayer();
 
+	float DefaultWalkingSpeed;
+
+	float ChasingWalkingSpeed;
+
 };

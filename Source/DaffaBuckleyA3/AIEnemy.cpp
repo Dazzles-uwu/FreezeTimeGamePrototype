@@ -18,13 +18,17 @@ AAIEnemy::AAIEnemy()
 	if (EnemyProjectileBlueprint.Object){
 		EnemyProjectileClass = EnemyProjectileBlueprint.Object->GeneratedClass;
 	}
+
+	DefaultWalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	ChasingWalkingSpeed = DefaultWalkingSpeed * 4;
 }
 
 // Called when the game starts or when spawned
 void AAIEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	GetCharacterMovement()->MaxWalkSpeed = ChasingWalkingSpeed;
 }
 
 void AAIEnemy::ShootPlayer()

@@ -3,6 +3,8 @@
 
 #include "EnemyAIController.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+
 AEnemyAIController::AEnemyAIController()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -117,6 +119,7 @@ void AEnemyAIController::OnSensesUpdated(AActor* UpdatedActor, FAIStimulus Stimu
 		{
 			TargetPlayer = nullptr;
 			BlackboardComponent->ClearValue("ChasePlayer");
+			
 		}
 	}
 }
