@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "AIEnemy.h"
 #include "NavigationSystem.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "EnemyAIController.generated.h"
 
 /**
@@ -27,11 +30,11 @@ public:
 
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
-	UFUNCTION()
-	void OnPawnDetected(const TArray<AActor*>& DetectedPawns);
+	/*UFUNCTION()
+	void OnPawnDetected(const TArray<AActor*>& DetectedPawns);*/
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=AI)
-		float SightRadius = 500;
+		float SightRadius = 1500;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=AI)
 		float SightAge = 3.5;
@@ -45,6 +48,29 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=AI)
 		UAISenseConfig_Sight* SightConfiguration;
 
+	UPROPERTY(EditDefaultsOnly, Category = Blackboard)
+		UBlackboardData* AIBlackboard;
+
+	UPROPERTY(EditDefaultsOnly, Category = Blackboard)
+		UBehaviorTree* BehaviorTree;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Blackboard)
+		UBlackboardComponent* BlackboardComponent;
+
 	UNavigationSystemV1* NavigationSystem;
 	APawn* TargetPlayer;
+
+	UFUNCTION()
+	void GenerateNewRandomLocation();
+
+	UFUNCTION()
+	void ShootBullet();
+
+	UFUNCTION()
+    void OnSensesUpdated(AActor* UpdatedActor, FAIStimulus Stimulus);
+
+	AAIEnemy* PossessedAIEnemy;
+
+	float CurrentTimer = 0;
+	float MaxTimer = 3;
 };

@@ -19,7 +19,8 @@ AEnemyAIController::AEnemyAIController()
 
 	GetPerceptionComponent()->SetDominantSense(*SightConfiguration->GetSenseImplementation());
 	GetPerceptionComponent()->ConfigureSense(*SightConfiguration);
-	GetPerceptionComponent()->OnPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnPawnDetected);
+	//GetPerceptionComponent()->OnPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnPawnDetected);
+	GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnSensesUpdated);
 	TargetPlayer = nullptr;
 }
 
@@ -28,22 +29,40 @@ void AEnemyAIController::BeginPlay()
 	Super::BeginPlay();
 
 	NavigationSystem = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
-	if(NavigationSystem)
-	{
-		FNavLocation ReturnLocation;
-		NavigationSystem->GetRandomPointInNavigableRadius(GetPawn()->GetActorLocation(), 2000,ReturnLocation);
-		MoveToLocation(ReturnLocation.Location);
-	}
+
+	if(!AIBlackboard)
+		return;
+	if(!ensure(BehaviorTree))
+		return;
+	
+	UseBlackboard(AIBlackboard, BlackboardComponent);
+	RunBehaviorTree(BehaviorTree);
 }
 
 void AEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+
+	PossessedAIEnemy = Cast<AAIEnemy>(InPawn);
 }
 
 void AEnemyAIController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	if(TargetPlayer)
+    {
+		BlackboardComponent->SetValueAsVector("PlayerPosition", TargetPlayer->GetActorLocation());
+    }
+
+	/*if (PossessedAIEnemy)
+	{
+		if (BlackboardComponent->GetValueAsBool("ChasePlayer") == true)
+		{
+			PossessedAIEnemy->ShootPlayer();
+		}
+	}*/
+
 }
 
 FRotator AEnemyAIController::GetControlRotation() const
@@ -61,32 +80,43 @@ FRotator AEnemyAIController::GetControlRotation() const
 void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
 	Super::OnMoveCompleted(RequestID, Result);
+}
 
-	if(NavigationSystem)
+
+void AEnemyAIController::GenerateNewRandomLocation()
+{
+	 if(NavigationSystem)
+     {
+	     FNavLocation ReturnLocation;
+	     NavigationSystem->GetRandomPointInNavigableRadius(GetPawn()->GetActorLocation(), 2000, ReturnLocation);
+	     BlackboardComponent->SetValueAsVector("PatrolPoint", ReturnLocation.Location);
+     }
+
+}
+
+void AEnemyAIController::ShootBullet()
+{
+	if (PossessedAIEnemy)
 	{
-		FNavLocation ReturnLocation;
-		NavigationSystem->GetRandomPointInNavigableRadius(GetPawn()->GetActorLocation(),
-	   2000,ReturnLocation);
-		MoveToLocation(ReturnLocation.Location);
+		PossessedAIEnemy->ShootPlayer();
 	}
 }
 
-void AEnemyAIController::OnPawnDetected(const TArray<AActor*>& DetectedPawns)
+void AEnemyAIController::OnSensesUpdated(AActor* UpdatedActor, FAIStimulus Stimulus)
 {
-	for(auto TempActor : DetectedPawns)
+	APawn* TemporaryPawn = Cast<APawn>(UpdatedActor);
+	if(TemporaryPawn && TemporaryPawn->IsPlayerControlled())
 	{
-		APawn* TempPawn = Cast<APawn>(TempActor);
-		if(TempPawn)
+		if(Stimulus.WasSuccessfullySensed())
 		{
-			if(TargetPlayer && TargetPlayer == TempPawn)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Player is known and is now leaving target space"));
-				TargetPlayer = nullptr;
-			} else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Player has been spotted. Saving reference"));
-				TargetPlayer = TempPawn;
-			}
+			UE_LOG(LogTemp, Warning, TEXT("Set Actor Location"));
+			TargetPlayer = TemporaryPawn;
+			BlackboardComponent->SetValueAsBool("ChasePlayer", true);
+			BlackboardComponent->SetValueAsVector("PlayerPosition", TargetPlayer->GetActorLocation());
+		} else
+		{
+			TargetPlayer = nullptr;
+			BlackboardComponent->ClearValue("ChasePlayer");
 		}
 	}
 }

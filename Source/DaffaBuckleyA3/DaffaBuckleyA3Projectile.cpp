@@ -45,7 +45,7 @@ void ADaffaBuckleyA3Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 		
 		Destroy();
 	}
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) &&Cast<AEnemy>(OtherActor))
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && Cast<AEnemy>(OtherActor))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("An Enemy has been hit") );
 		

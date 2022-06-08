@@ -2,6 +2,7 @@
 
 
 #include "AIEnemy.h"
+#include "EnemyProjectile.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -12,6 +13,11 @@ AAIEnemy::AAIEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0, 5, 0);
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> EnemyProjectileBlueprint(TEXT("Blueprint'/Game/FirstPerson/Blueprints/BP_EnemyProjectile.BP_EnemyProjectile'"));
+	if (EnemyProjectileBlueprint.Object){
+		EnemyProjectileClass = EnemyProjectileBlueprint.Object->GeneratedClass;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -19,6 +25,21 @@ void AAIEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AAIEnemy::ShootPlayer()
+{
+	FVector BulletSpawnOffset = FVector(0, 0, 80);
+
+	BulletSpawnOffset = GetRootComponent()->GetComponentRotation().RotateVector(BulletSpawnOffset);
+	
+	FVector EnemyPosition = GetActorLocation();
+	//FVector StartPosition = BulletSpawnOffset + EnemyPosition;
+
+	AEnemyProjectile* SpawnedBullet = (AEnemyProjectile*) GetWorld()->SpawnActor(EnemyProjectileClass, &EnemyPosition);
+
+	SpawnedBullet->Parent = this;
+	SpawnedBullet->SetActorRotation(GetRootComponent()->GetComponentRotation());
 }
 
 // Called every frame
