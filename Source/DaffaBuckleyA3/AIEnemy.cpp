@@ -21,6 +21,11 @@ AAIEnemy::AAIEnemy()
 
 	DefaultWalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	ChasingWalkingSpeed = DefaultWalkingSpeed * 4;
+
+	Destroyed = false;
+	CurrentTimer = 0;
+	MaxTimer = 2;
+	
 }
 
 // Called when the game starts or when spawned
@@ -51,6 +56,15 @@ void AAIEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (Destroyed)
+	{
+		CurrentTimer += DeltaTime;
+		
+		if (CurrentTimer >= MaxTimer)
+		{
+			Destroy();
+		}
+	}
 }
 
 // Called to bind functionality to input

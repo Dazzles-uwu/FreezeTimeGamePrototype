@@ -3,8 +3,10 @@
 
 #include "HumanPlayerController.h"
 
+#include "AIEnemy.h"
 #include "Enemy.h"
 #include "EnemyProjectile.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void AHumanPlayerController::SetupInputComponent()
@@ -78,6 +80,14 @@ void AHumanPlayerController::HawkEyeDeactivated()
 			Cast<AEnemyProjectile>(Temp)->MovementSpeed = Cast<AEnemyProjectile>(Temp)->MovementSpeed * HawkEyeMultiplier;
 		}
 		TempActors.Empty();
+
+		//GET ALL ENEMY AI ACTORS
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAIEnemy::StaticClass(), TempActors);
+		for(auto Temp : TempActors)
+		{
+			Cast<AAIEnemy>(Temp)->GetCharacterMovement()->MaxWalkSpeed = Cast<AAIEnemy>(Temp)->GetCharacterMovement()->MaxWalkSpeed * (HawkEyeMultiplier * 3);
+		}
+		TempActors.Empty();
 	}
 }
 
@@ -101,6 +111,14 @@ void AHumanPlayerController::HawkEyeActivated()
 		for(auto Temp : TempActors)
 		{
 			Cast<AEnemyProjectile>(Temp)->MovementSpeed = Cast<AEnemyProjectile>(Temp)->MovementSpeed / HawkEyeMultiplier;
+		}
+		TempActors.Empty();
+
+		//GET ALL ENEMY AI ACTORS
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAIEnemy::StaticClass(), TempActors);
+		for(auto Temp : TempActors)
+		{
+			Cast<AAIEnemy>(Temp)->GetCharacterMovement()->MaxWalkSpeed = Cast<AAIEnemy>(Temp)->GetCharacterMovement()->MaxWalkSpeed / (HawkEyeMultiplier * 3);
 		}
 		TempActors.Empty();
 		UE_LOG(LogTemp, Warning, TEXT("HawkEyeActivated"));

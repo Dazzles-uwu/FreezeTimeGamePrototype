@@ -35,4 +35,9 @@ public:
 
 	float ChasingWalkingSpeed;
 
+	bool Destroyed;
+
+	float CurrentTimer;
+	float MaxTimer;
+
 };

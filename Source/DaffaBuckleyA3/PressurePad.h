@@ -23,6 +23,11 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		UBoxComponent* PressurePadHitBox;
+		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
+        UMaterialInterface* material;
+        
+    UMaterialInstanceDynamic* matInstance;
 
 	UFUNCTION()
     void OnHitboxOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -37,6 +42,10 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	void HawkEyeActivateMaterialColours();
+
+	void HawkEyeDeactivateMaterialColours();
 
 private:
 	TArray<FVector> TeleportableLocations;

@@ -101,6 +101,7 @@ void AEnemyAIController::ShootBullet()
 	if (PossessedAIEnemy)
 	{
 		PossessedAIEnemy->ShootPlayer();
+		UE_LOG(LogTemp, Warning, TEXT("Shoot"));
 	}
 }
 

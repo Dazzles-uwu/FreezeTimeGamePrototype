@@ -55,6 +55,12 @@ void APressurePad::BeginPlay()
 	Super::BeginPlay();
 
 	PressurePadHitBox->OnComponentBeginOverlap.AddDynamic(this, &APressurePad::OnHitboxOverlapBegin);
+
+	if(material)
+	{
+		matInstance = UMaterialInstanceDynamic::Create(material, this);
+		PressurePadMesh->SetMaterial(0, matInstance);
+	}
 }
 
 // Called every frame
@@ -62,5 +68,19 @@ void APressurePad::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+//ATTEMPTED TO USE COLOURS/MATERIALS
+void APressurePad::HawkEyeActivateMaterialColours()
+{
+	matInstance->SetVectorParameterValue("Colour", FLinearColor(255,165, 0));
+    matInstance->SetScalarParameterValue("Emissive", 1);
+}
+
+//ATTEMPTED TO USE COLOURS/MATERIALS
+void APressurePad::HawkEyeDeactivateMaterialColours()
+{
+	matInstance->SetVectorParameterValue("Colour", FLinearColor(0.333,0.3333, 0.333));
+	matInstance->SetScalarParameterValue("Emissive", 0);
 }
 

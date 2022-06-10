@@ -37,7 +37,7 @@ public:
 		float SightRadius = 1500;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=AI)
-		float SightAge = 3.5;
+		float SightAge = 0.5;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=AI)
 		float LoseSightRadius = SightRadius + 30;
